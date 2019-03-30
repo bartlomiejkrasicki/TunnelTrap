@@ -6,9 +6,10 @@ public class PlayerMove : MonoBehaviour
 {
     public int playerSpeed = 70;
     public bool facingRight = true;
-    public int playerJumpPower = 30;
+    public int playerJumpPower = 1200;
     public float moveX;
     public bool isGrounded;
+    public bool inCrawlingPosition = false;
 
     void Start()
     {
@@ -36,6 +37,7 @@ public class PlayerMove : MonoBehaviour
         {
             FlipPlayer();
         }
+        ChangePositionToCrawl();
         gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(moveX * playerSpeed, gameObject.GetComponent<Rigidbody2D>().velocity.y);
     }
 
@@ -47,9 +49,23 @@ public class PlayerMove : MonoBehaviour
     void FlipPlayer()
     {
         facingRight = !facingRight;
-        Vector2 localscale = gameObject.transform.localScale;
-        localscale.x *= -1;
-        transform.localScale = localscale;
+        GetComponent<SpriteRenderer>().flipX = facingRight;
+    }
+
+    void ChangePositionToCrawl()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            gameObject.GetComponent<CircleCollider2D>().enabled = false;
+            gameObject.GetComponent<BoxCollider2D>().enabled = true;
+            inCrawlingPosition = true;
+        }
+        else
+        {
+            gameObject.GetComponent<CircleCollider2D>().enabled = true;
+            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            inCrawlingPosition = false;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
